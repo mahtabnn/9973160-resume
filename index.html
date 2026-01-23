@@ -52,7 +52,7 @@
     <p>© 2025 مهتاب نیک نژاد</p>
   </footer>
   <script>
-    const ws = new WebSocket("ws://localhost:8000/ws");
+    const ws = new WebSocket("wss://nine973160-resume-1.onrender.com/ws");
     ws.onmessage = (e) => {
       document.getElementById("online").innerText = e.data;
     };
@@ -60,5 +60,6 @@
 
 </body>
 </html>
+
 
 

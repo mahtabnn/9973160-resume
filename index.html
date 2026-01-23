@@ -51,7 +51,14 @@
   <footer>
     <p>© 2025 مهتاب نیک نژاد</p>
   </footer>
+  <script>
+    const ws = new WebSocket("ws://localhost:8000/ws");
+    ws.onmessage = (e) => {
+      document.getElementById("online").innerText = e.data;
+    };
+  </script>
 
 </body>
 </html>
+
 

@@ -1,56 +1,36 @@
-from fastapi import FastAPI
-from schemas import ProjectRequest, WebSocketDisconnect
-from fastapi import WebSocket
-from fastapi.staticfiles import StaticFiles 
-from fastapi.responses import FileResponse 
+from fastapi import FastAPI, WebSocket
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
 
 app = FastAPI()
-app.mount("/static",StaticFiles(directory="static"),name="static")
-
-@app.get("/")
-def resume():
-    return FileResponse("static/index.html")
 
 
-#ثبت درخواست
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
-requests_list = []
+class RequestData(BaseModel):
+    name: str
+    email: str
+    project_type: str
+    budget: str
+    description: str
+
+
+@app.get("/", response_class=HTMLResponse)
+async def home():
+    with open("index.html", encoding="utf-8") as f:
+        return f.read()
+
 
 @app.post("/request")
-def create_request(data: ProjectRequest):
-    requests_list.append(data)
-    return {"status": "saved"}
+async def receive_request(data: RequestData):
+    print(data)
+    return {"status": "ok"}
 
-
-@app.post("/login")
-def login(username: str, password: str):
-    if username == "admin" and password == "1234":
-        return {"token": "fake-jwt-token"}
-    return {"error": "unauthorized"}
-
-@app.get("/admin/requests")
-def get_requests(token: str):
-    if token != "fake-jwt-token":
-        return {"error": "forbidden"}
-    return requests_list
-
-
-
-
-
-#تعداد کاربر انلاین
-online_users = 0
 
 @app.websocket("/ws")
 async def websocket_endpoint(ws: WebSocket):
-    global online_users
     await ws.accept()
-    online_users += 1
-    await ws.send_text(str(online_users))
-    try:
-        while True:
-            await ws.receive_text()
-    except:
-        online_users -= 1
-
-
+    await ws.send_text("کاربر آنلاین است")
+    while True:
+        await ws.receive_text()

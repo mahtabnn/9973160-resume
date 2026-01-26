@@ -1,12 +1,15 @@
 from fastapi import FastAPI
 from schemas import ProjectRequest, WebSocketDisconnect
 from fastapi import WebSocket
+from fastapi.staticfiles import StaticFiles 
+from fastapi.responses import FileResponse 
 
 app = FastAPI()
+app.mount("/static",StaticFiles(directory="static"),name="static")
 
 @app.get("/")
-def home():
-    return {"message": "Server is running"}
+def resume():
+    return FileResponse("static/index.html")
 
 
 #ثبت درخواست
@@ -49,4 +52,5 @@ async def websocket_endpoint(ws: WebSocket):
             await ws.receive_text()
     except:
         online_users -= 1
+
 

@@ -1,65 +1,127 @@
 <!DOCTYPE html>
 <html lang="fa">
 <head>
-  <link rel="stylesheet" href="style.css">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>رزومه من</title>
+  <link rel="stylesheet" href="/static/style.css">
 </head>
+
 <body>
 
   <header>
-    <h1>مهتاب نیک نژاد</h1>
-    <p>ایمیل: <a href="mahtab.nicknezhad@gmail.com">mahtab.nicknezhad@gmail.com</a></p>
-    <p>GitHub: <a href="https://github.com/mahtabnn" target="_blank">https://github.com/mahtabnn</a></p>
+    <h1>مهتاب نیک‌نژاد</h1>
+    <p>
+      ایمیل:
+      <a href="mailto:mahtab.nicknezhad@gmail.com">
+        mahtab.nicknezhad@gmail.com
+      </a>
+    </p>
+    <p>
+      GitHub:
+      <a href="https://github.com/mahtabnn" target="_blank">
+        https://github.com/mahtabnn
+      </a>
+    </p>
   </header>
 
-  <section>
-    <h2>معرفی کوتاه</h2>
-    <p>من یک دانشجوی مهندسی کامپیوتر هستم که به امنیت شبکه علاقه دارم. در حال یادگیری CCNA , CEH هستم.</p>
-  </section>
+  <main>
 
-  <section>
-    <h2>تحصیلات</h2>
-    <article>
-      <h3>کارشناسی مهندسی کامپیوتر</h3>
-      <p>دانشگاه چمران اهواز (1399 تا اکنون)</p>
-    </article>
-  </section>
+    <section>
+      <h2>معرفی کوتاه</h2>
+      <p>
+        من دانشجوی مهندسی کامپیوتر هستم و به امنیت شبکه علاقه دارم.
+        در حال یادگیری CCNA و CEH هستم.
+      </p>
+    </section>
 
-  <section>
-    <h2>تجربه‌ها و پروژه‌ها</h2>
-    <article>
-      <h3>پروژه های دانشگاهی</h3>
-    </article>
-    <article>
-      <h3>ربات کنترل از راه دور</h3>
-      <p>ساخته‌شده با stm32 و سنسورهای IR برای کنترل حرکت.</p>
-    </article>
-  </section>
+    <section>
+      <h2>تحصیلات</h2>
+      <article>
+        <h3>کارشناسی مهندسی کامپیوتر</h3>
+        <p>دانشگاه چمران اهواز (1399 تا اکنون)</p>
+      </article>
+    </section>
 
-  <section>
-    <h2>مهارت‌ها</h2>
-    <ul>
-      <li>HTML و CSS (پایه)</li>
-      <li> JAVA, C++, Python زبان های </li>
-      <Li>کار با برنامه های xilinx , proteus , power bi </Li>
+    <section>
+      <h2>تجربه‌ها و پروژه‌ها</h2>
+      <article>
+        <h3>پروژه‌های دانشگاهی</h3>
+      </article>
+      <article>
+        <h3>ربات کنترل از راه دور</h3>
+        <p>ساخته‌شده با STM32 و سنسورهای IR برای کنترل حرکت</p>
+      </article>
+    </section>
 
-    </ul>
-  </section>
+    <section>
+      <h2>مهارت‌ها</h2>
+      <ul>
+        <li>HTML و CSS (پایه)</li>
+        <li>Java، C++، Python</li>
+        <li>Xilinx، Proteus، Power BI</li>
+      </ul>
+    </section>
+
+    <hr>
+
+    <!-- کاربران آنلاین -->
+    <p>
+      👤 کاربران آنلاین:
+      <span id="online">0</span>
+    </p>
+
+    <hr>
+
+    <!-- فرم درخواست پروژه -->
+    <section>
+      <h2>فرم درخواست پروژه</h2>
+
+      <form id="requestForm">
+        <input type="text" id="name" placeholder="نام" required>
+        <input type="email" id="email" placeholder="ایمیل" required>
+        <textarea id="desc" placeholder="توضیح پروژه"></textarea>
+        <button type="submit">ارسال</button>
+      </form>
+    </section>
+
+  </main>
 
   <footer>
-    <p>© 2025 مهتاب نیک نژاد</p>
+    <p>© 2025 مهتاب نیک‌نژاد</p>
   </footer>
+
+
   <script>
-    const ws = new WebSocket("wss://nine973160-resume-1.onrender.com/ws");
-    ws.onmessage = (e) => {
-      document.getElementById("online").innerText = e.data;
+    /* کاربران آنلاین */
+    const ws = new WebSocket("wss://nine973160-resume.onrender.com/ws");
+
+    ws.onmessage = (event) => {
+      document.getElementById("online").innerText = event.data;
     };
+
+    /* ارسال فرم درخواست */
+    document.getElementById("requestForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      await fetch("/request", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          name: document.getElementById("name").value,
+          email: document.getElementById("email").value,
+          project_type: "web",
+          budget: "نامشخص",
+          description: document.getElementById("desc").value
+        })
+      });
+
+      alert("درخواست ارسال شد ");
+      document.getElementById("requestForm").reset();
+    });
   </script>
 
 </body>
 </html>
-
-
-

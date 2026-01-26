@@ -1,0 +1,98 @@
+/* === تنظیمات کلی === */
+body {
+    font-family: "Vazirmatn", sans-serif;
+    direction: rtl;
+    background-color: #f8f9fa;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    line-height: 1.8;
+  }
+  
+  /* === هدر === */
+  header {
+    background-color: #0078d7;
+    color: white;
+    text-align: center;
+    padding: 2rem 1rem;
+    border-bottom-left-radius: 25px;
+    border-bottom-right-radius: 25px;
+  }
+  
+  header a {
+    color: #ffeb99;
+    text-decoration: none;
+  }
+  
+  header a:hover {
+    text-decoration: underline;
+  }
+  
+  /* === ساختار کلی رزومه === */
+  section {
+    max-width: 900px;
+    margin: 2rem auto;
+    background: white;
+    padding: 1.5rem 2rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  h1, h2, h3 {
+    margin-top: 0;
+  }
+  
+  h2 {
+    color: #0078d7;
+    border-bottom: 2px solid #0078d7;
+    padding-bottom: 0.5rem;
+  }
+  
+  /* === لیست مهارت‌ها === */
+  ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+  ul li {
+    background-color: #e7f0ff;
+    padding: 8px 15px;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+  }
+  
+  ul li:hover {
+    background-color: #0078d7;
+    color: white;
+  }
+  
+  /* === فوتر === */
+  footer {
+    text-align: center;
+    padding: 1rem;
+    font-size: 0.9rem;
+    color: #555;
+    background-color: #f1f1f1;
+    border-top: 1px solid #ccc;
+  }
+  
+  /* === واکنش‌گرا برای موبایل === */
+  @media (max-width: 600px) {
+    body {
+      font-size: 0.9rem;
+    }
+  
+    section {
+      margin: 1rem;
+      padding: 1rem;
+    }
+  
+    ul {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+  

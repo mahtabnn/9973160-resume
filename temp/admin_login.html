@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Admin Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar__inner">
+      <div class="brand">
+        <span class="brand__dot" aria-hidden="true"></span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="grid">
+      <section class="card">
+        <div class="card__inner">
+          <h1 class="card__title">Admin Login</h1>
+          <p class="card__subtitle">Sign in to view stored project requests.</p>
+
+          <form id="login-form" autocomplete="on">
+            <div class="field">
+              <div class="label">Username</div>
+              <input type="text" name="username" placeholder="admin" required />
+            </div>
+            <div class="field">
+              <div class="label">Password</div>
+              <input type="password" name="password" placeholder="••••••••" required />
+            </div>
+            <div class="row">
+              <button class="btn btn-primary" type="submit">Login</button>
+              <a class="btn btn-ghost" href="/">Back</a>
+            </div>
+          </form>
+
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const form = document.getElementById('login-form');
+    const status = document.getElementById('status');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fd = new FormData(form);
+      try {
+        status.className = 'status';
+        status.innerText = 'Signing in…';
+        const res = await fetch('/api/admin/login', {
+          method: 'POST',
+          body: fd
+        });
+        if (!res.ok) {
+          status.className = 'status status--bad';
+          status.innerText = 'Login failed';
+          return;
+        }
+        const json = await res.json();
+        localStorage.setItem('admin_token', json.access_token);
+        window.location.href = '/admin/requests';
+      } catch (err) {
+        status.className = 'status status--bad';
+        status.innerText = 'Error';
+      }
+    });
+  </script>
+</body>
+</html>

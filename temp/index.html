@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>resume</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar__inner">
+      <div class="brand">
+      </div>
+      <nav class="nav" aria-label="Primary">
+        <a href="/request">Request a Project</a><br>
+        <a href="/admin/login">Admin login</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="grid">
+      <section class="card hero">
+        <div class="card__inner">
+          <h1 class="hero__headline">discription</h1>
+          <p class="card__subtitle">
+            I’m an active network security enthusiast with hands-on experience in security tools 
+            and a solid understanding of networking concepts. I’m familiar with CCNA-level networking and ethical hacking principles (CEH),
+             and I enjoy working on securing systems and analyzing network vulnerabilities.
+             also i am familiar with power bi and data visualization
+          </p>
+
+          <div class="chips" aria-label="Highlights">
+            <span class="badge" title="Number of Live viewers">
+              <span class="badge__dot" aria-hidden="true"></span>
+              Online: <strong id="online-count">0</strong>
+            </span>
+          </div>
+
+          <div class="divider"></div>
+
+          <h2 class="card__title">Skills</h2>
+          <div class="chips">
+            <span class="chip">security ,CCNA </span>
+            <span class="chip">, POWER BI</span>
+            <span class="chip">, LPIC</span>
+            <span class="chip">, HTML و CSS </span>
+            <span class="chip">Java، C++، Python</span>
+            <span class="chip">Xilinx، Proteus</span>
+          </div>
+        </div>
+      </section>
+
+      <aside class="card card--soft">
+        <div class="card__inner">
+          <h2 class="card__title">Contact</h2>
+          <div class="divider"></div>
+          <p style="margin:0 0 12px;color:rgba(255,255,255,.82)">
+            <strong>Email</strong><br />
+            <a href="mailto:mahtab.nicknezhad@gmail.com">mahtab.nicknezhad@gmail.com</a>
+          </p>
+          <div class="row">
+          </div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <script>
+    const ws = new WebSocket((location.protocol === "https:" ? "wss" : "ws") + "://" + location.host + "/ws/online");
+    const countEl = document.getElementById("online-count");
+    ws.onmessage = (evt) => {
+      try {
+        const data = JSON.parse(evt.data);
+        if (data && typeof data.online === "number") {
+          countEl.innerText = data.online;
+        }
+      } catch (e) { /* ignore */ }
+    };
+    ws.onopen = () => { /* connected */ };
+    ws.onclose = () => { /* closed */ };
+    // send a heartbeat message to keep connection alive
+    setInterval(() => { if (ws.readyState === WebSocket.OPEN) ws.send("ping"); }, 20000);
+  </script>
+</body>
+</html>

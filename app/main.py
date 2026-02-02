@@ -58,7 +58,6 @@ class ConnectionManager:
             try:
                 await connection.send_json(msg)
             except Exception:
-               
                 pass
 
 manager = ConnectionManager()
@@ -67,7 +66,7 @@ manager = ConnectionManager()
 @app.get("/", response_class=HTMLResponse)
 def index(request: Request):
     
-    return templates.TemplateResponse("index.html", {"request": request, "email": "mahtab.nicknezhad@gmail.com", "skills": "Kotlin programmer"})
+    return templates.TemplateResponse("index.html", {"request": request, "email": "esmailalvani@gmail.com", "skills": "Kotlin programmer"})
 
 @app.get("/request", response_class=HTMLResponse)
 def request_form(request: Request):
@@ -81,7 +80,7 @@ def admin_login_page(request: Request):
 def admin_requests_page(request: Request):
     return templates.TemplateResponse("admin_requests.html", {"request": request})
 
-
+# API endpoints
 @app.post("/api/requests", response_model=schemas.ProjectRequestOut)
 def create_project_request(item: schemas.ProjectRequestCreate, db: Session = Depends(get_db)):
     db_item = crud.create_request(db, item)
@@ -89,7 +88,6 @@ def create_project_request(item: schemas.ProjectRequestCreate, db: Session = Dep
 
 @app.post("/api/admin/login", response_model=schemas.Token)
 def admin_login(username: str = Form(...), password: str = Form(...)):
-    
     if username != auth.ADMIN_USERNAME or password != auth.ADMIN_PASSWORD:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
     access_token = auth.create_access_token(data={"sub": username}, expires_delta=timedelta(hours=24))
@@ -130,7 +128,6 @@ async def websocket_online(websocket: WebSocket):
         while True:
             
             data = await websocket.receive_text()
-            
             await manager.broadcast_count()
     except WebSocketDisconnect:
         manager.disconnect(websocket)
@@ -142,5 +139,6 @@ async def websocket_online(websocket: WebSocket):
 
 if __name__ == "__main__":
     import uvicorn
+    
     port = int(os.getenv("PORT", 80))
     uvicorn.run(app, host="0.0.0.0", port=port, log_level="info")

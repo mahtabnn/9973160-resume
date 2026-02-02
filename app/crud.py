@@ -1,39 +1,63 @@
+import os
+from datetime import datetime, timedelta
+from jose import jwt, JWTError
+from fastapi import HTTPException, Depends, status
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 from . import models, schemas
 
-def create_request(db: Session, req: schemas.ProjectRequestCreate) -> models.ProjectRequest:
-    db_item = models.ProjectRequest(
-        name=req.name,
-        email=req.email,
-        description=req.description
+SECRET_KEY = os.environ.get("SECRET_KEY", "changeme-secret-key")
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24  
+
+ADMIN_USERNAME = os.environ.get("ADMIN_USERNAME", "admin")
+ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "adminpass")  
+
+security = HTTPBearer()
+
+def create_request(db: Session, request: schemas.ProjectRequestCreate):
+    db_request = models.ProjectRequest(
+        name=request.name,
+        email=request.email,
+        description=request.description,
+        status="new",                  
     )
-    db.add(db_item)
+    db.add(db_request)
     db.commit()
-    db.refresh(db_item)
-    return db_item
+    db.refresh(db_request)
+    return db_request
+
+
 
 def get_all_requests(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.ProjectRequest).order_by(models.ProjectRequest.created_at.desc()).offset(skip).limit(limit).all()
+    return (
+        db.query(models.ProjectRequest)
+        .order_by(models.ProjectRequest.created_at.desc())   
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
 
-def get_request(db: Session, request_id: int) -> models.ProjectRequest | None:
-    return db.query(models.ProjectRequest).filter(models.ProjectRequest.id == request_id).first()
+#///////////////////////////////////////////////
+def create_access_token(data: dict, expires_delta: timedelta | None = None):
+    to_encode = data.copy()
+    expire = datetime.utcnow() + (expires_delta or timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
+    to_encode.update({"exp": expire})
+    return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
-def update_request(db: Session, request_id: int, update: schemas.ProjectRequestUpdate) -> models.ProjectRequest | None:
-    db_item = get_request(db, request_id)
-    if not db_item:
-        return None
-    if update.status is not None:
-        db_item.status = update.status
-    if update.admin_notes is not None:
-        db_item.admin_notes = update.admin_notes
-    db.commit()
-    db.refresh(db_item)
-    return db_item
+def verify_token_get_username(token: str):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        username: str = payload.get("sub")
+        if username is None:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
+        return username
+    except JWTError:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
 
-def delete_request(db: Session, request_id: int) -> bool:
-    db_item = get_request(db, request_id)
-    if not db_item:
-        return False
-    db.delete(db_item)
-    db.commit()
-    return True
+def get_current_admin(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    token = credentials.credentials
+    username = verify_token_get_username(token)
+    if username != ADMIN_USERNAME:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not authorized")
+    return username

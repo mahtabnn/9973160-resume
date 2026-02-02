@@ -4,13 +4,13 @@ from jose import jwt, JWTError
 from fastapi import HTTPException, Depends, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
-# Config - override with env vars for production
+
 SECRET_KEY = os.environ.get("SECRET_KEY", "changeme-secret-key")
 ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24  # 24 hours
+ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24  
 
 ADMIN_USERNAME = os.environ.get("ADMIN_USERNAME", "admin")
-ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "adminpass")  # change in prod
+ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "adminpass")  
 
 security = HTTPBearer()
 
